@@ -1,0 +1,20 @@
+We always start with a 4X4 maze made in ascii art with walls where each point in the maze is a color. The robot starts at a given start location, but it doesn't
+know where it is.
+Initially, you have an equal chance of being in every square, which is stored in a numpy array. When the robot moves
+along the given path through the maze, it calculates the probability of where it could be using the forward tracking algorithm
+By the end of the path it should have a good idea of where it is.
+
+-You need the maze, which can be built in Maze.py. Each ascii dot can be changed to one of the color letters.
+
+-You need the sensor readings coming in from the agent. You only need to store the current sensor reading and the previous
+because we are operating on the Markov assumption. Sensor readings come from test_mazeworld.py. The agent can be represented
+as a method instead of a whole object.
+
+-State transition Model:
+*  figure out by reading the textbook
+
+
+-implement the Forward Backward algo OR use multiplying matrices
+
+
+"You need some type of sensor, some type of way to represent a state. Apply the transition model (the way you move the agent to the next state following your given path) to the state that you're in. "

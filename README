@@ -1,0 +1,5 @@
+To run this lab, right click on Model.py and click 'run'
+- For Model.py to run you must first instantiate a maze object using the Altered_Maze class.
+- If you want, you can create a random sequence of moves for the robot to follow using YOUR_MAZE_NAME.create_sequence(), or
+you can just input the set of tiles you want the robot to travel to as a list, which is fine, but not random.
+-Then, create a Robot object holds all the methods to build the model and run the algorithms.

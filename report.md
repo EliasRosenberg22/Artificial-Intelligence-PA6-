@@ -1,0 +1,30 @@
+# PA6: Hidden Markov Localization
+#Elias Rosenberg
+#CS76
+#Professor Quattrini Li
+#21F
+#November 14th, 2021
+
+# Introduction: 
+In this lab we were tasked with implementing the forward-backward algorithm to localize a robot in a maze using just probabilities and a flawed color sensor. The robot moves through a maze of colored tiles that can be red, green, blue, or yellow, and can sense the color of any given tile with %88 accuracy. By keeping track of the observed tiles and total color counts, you can update the probability of the robot being on any given tile at each time step.
+
+# Discussion: 
+Since there was very little guidance for the implementation of this lab, I still don't really know if what I did was correct. After reading the text book, watching the lectures, and reaching out to TAs, I still had trouble visualizing what was going on in this lab, so I worked closely with a friend to write pseudocode that I could actually implement. I credit my modest progress with this lab to her. 
+
+To start, the lab instructions say that the robot's movement throught the maze was random. I figured there were two ways to approach this. Either you could select a random start state for the robot, and then choose a random direction to travel in as the robot moved from tile to tile. The implementation I chose was to generate a random path for the robot within Altered_Maze.py that it would follow. In my lab, each timestep is just the robot moving to a different state along that predetermined path, so I didn't need to deal with an actual time incrementer. The random generation of that path was derived from code we used in PA2. Given any state the robot was in, check all of its neighbors for legal moves. Add those legal moves to a list, and then choose one from the list at random, and add that coordinate to the path the robot should take. 
+
+The actual transition model and observation models for the robot were much more complicated. The transition model kept track of the probability of moving to any neighboring state given your current state. Given the coordinates of any first state, the chance of it traveling to one of its neighbor states is 1 in 4 if there are no walls, or 1 in 4 minus however many walls surround that coordinate. If a state is not a neighbor of the current state we are looking at, then it's transition probability is 0, because it is not physically possible for the robot to get there. 
+
+The observation model is where I implemented the luck of the sensor actually returning the correct color. For every state we look at keep track of wheter or not the color observation was stored correctly. %88 of the time, record the color observed as the actual color that it is (crossreferenced with a dictionary of colors-to-coordinates). The other %12 of the time, choose between one of the other colors to assign to this sensor reading to simulate an incorrect reading. I first built the transition model, then the observations in the method build_model() which affects instance variables of the global dictionaries we need for the forward-backward algorithm. 
+
+After we build the model of transition probabilities and color observations for every tile on the map, we get to the forward-backward algorithm that moves through states in the graph and alters the probabilities of each state as we get more information on the colors we have seen, and where the robot is now. The forward-backward algorithm is built on the Markov assumption, that states that you can predict where an agent is based on it's current location, and its previous location. As we store the shifting probabilities of each tile based on where the robot is in the given sequence of moves, we can predict where the robot is from the probabilities of the current time step and previous one. All I do is multiply the transition probability stored in my transitions dictionary from the previous state to the current state and then by the probability of observing a given color in this state. The probability of being in any given state is updated when we travel to a new position in the map and record its color, narrowing down which tiles we have visited because we know how many tiles of each color there are. This algorithm is based on the methods used to compute Markov Probabilities, because we don't know for certain which tile we are on, but we can compute it with a fair amount of certainty based on the tiles we have previously seen. 
+
+# Evaluation: 
+
+I have no earthly idea if my algorithm is working as expected. Depending on the distribution of color-squares, either I end up with a near definite answer of where the robot is, or a pretty vague one. I find that the more even spread between the four colors, the more accurate the robot is. If we have 3 tiles for each color, and 4 walls, then I've gotten as high as %78 certainty of which tile the robot is on. If half of all the tiles are red, then the algorithm is much less accurate at predicting where it is for any red tile on the board, and barely moves beyond the initial uniform distribution before the robot has even moved. 
+
+I know my forward-backward algorithm is pretty janky. I read the textbook over and over, but really couldn't grasp all the math that was going on behind the probability calculations. There's something about sigma notation that really throws me off. My friend who took CS70 breezed through the lab using numpy arrays and multiplying matrices together, but I'm not sure I'm fundamentally smart enough to figure that stuff out, so I went with the 'adhoc' method. 
+
+Animating the movement of the robot through the maze was ripped straight from PA2, and was easy to change since my robot's sequence was generated all at once instead of one random move at a time, so that should be fine. 
+
+*As a side note, the original assignment mentioned heuristics and inference and runtime. I saw on slack that that was cleared up, and that we no longer have to do that, so I didn't implement any of that stuff. I probably would have just ripped it all from PA2 anyway.*  
